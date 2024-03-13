@@ -1,0 +1,21 @@
+{
+  "name": "techdome-be",
+  "version": "1.0.0",
+  "description": "Techdome mini app backend",
+  "author": "Aman Jat",
+  "scripts": {
+    "dev": "nodemon src/index.js"
+  },
+  "devDependencies": {
+    "sequelize-cli": "^6.6.2"
+  },
+  "dependencies": {
+    "axios": "^1.6.7",
+    "body-parser": "^1.20.2",
+    "cookie-parser": "^1.4.6",
+    "dotenv": "^16.4.5",
+    "express": "^4.18.3",
+    "nodemon": "^3.1.0",
+    "sequelize": "^6.37.1"
+  }
+}
