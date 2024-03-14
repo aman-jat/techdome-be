@@ -1,8 +1,13 @@
 require('dotenv').config();
 
 const express = require('express');
-const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+
+const { test } = require('./controllers/test');
+const authRouter = require('./routes/auth');
+const memberRouter = require('./routes/member');
+
 const app = express();
 
 app.use(
@@ -22,18 +27,10 @@ app.use(function (err, _, res, next) {
 });
 app.use(express.urlencoded({ extended: true }));
 
-app.get('/', async function (req, res) {
-  try {
-    res.send({ status: 'ok' });
-  } catch (error) {
-    res.status(403).send({
-      status: 'failed',
-      code: 403,
-      message: 'Database connection failed',
-    });
-  }
-});
+app.get('/', test);
+app.use('/api/auth', authRouter);
+app.use('/api/member', memberRouter);
 
-app.listen(process.env.DB_PORT, () => {
-  console.log(`App listening at http://localhost:${process.env.DB_PORT}`);
-});
+app.listen(process.env.APP_PORT, () =>
+  console.log(`App listening at http://localhost:${process.env.APP_PORT}`)
+);
