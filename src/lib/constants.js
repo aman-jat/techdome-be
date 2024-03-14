@@ -1,4 +1,5 @@
 const SALT_ROUNDS = 10;
+const INTEREST_RATE = 0;
 
 const RES_MESSAGE = {
   LOGOUT: 'Logout Successfully',
@@ -6,6 +7,7 @@ const RES_MESSAGE = {
   UNAUTHORIZED: 'Unauthorized action',
   UNAUTHENTICATED: 'Please login again',
   INTERNAL_ERROR: 'Something went wrong',
+  NOT_FOUND: 'Not found',
 };
 
 const ROLE = {
@@ -13,4 +15,22 @@ const ROLE = {
   BORROWER: 'BORROWER',
 };
 
-module.exports = { SALT_ROUNDS, RES_MESSAGE, ROLE };
+const LOAN_STATUS = {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED',
+  CANCELLED: 'CANCELLED',
+  PAID: 'PAID',
+  OVERDUE: 'OVERDUE',
+};
+
+const PASSWORD_REGEX = /^[a-zA-Z0-9]{4,}$/;
+
+module.exports = {
+  SALT_ROUNDS,
+  RES_MESSAGE,
+  ROLE,
+  LOAN_STATUS,
+  INTEREST_RATE,
+  PASSWORD_REGEX,
+};

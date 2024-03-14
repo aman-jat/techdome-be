@@ -1,7 +1,11 @@
 const bcrypt = require('bcrypt');
 const db = require('../lib/db');
 const jwt = require('../lib/token');
-const { SALT_ROUNDS, RES_MESSAGE } = require('../lib/constants');
+const {
+  SALT_ROUNDS,
+  RES_MESSAGE,
+  PASSWORD_REGEX,
+} = require('../lib/constants');
 
 const clearCookie = res => {
   res.clearCookie('_auth');
@@ -15,9 +19,16 @@ const setCookie = (res, user) => {
 const register = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
-    if (!name || !email || !password || !role) {
+    if (
+      !name ||
+      !email ||
+      !password ||
+      !role ||
+      !PASSWORD_REGEX.test(password)
+    ) {
       throw new Error();
     }
+
     const salt = await bcrypt.genSalt(SALT_ROUNDS);
     const hashedPassword = await bcrypt.hash(password, salt);
     const user = await db.user.create({

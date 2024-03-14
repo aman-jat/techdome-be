@@ -7,6 +7,7 @@ const cookieParser = require('cookie-parser');
 const { test } = require('./controllers/test');
 const authRouter = require('./routes/auth');
 const memberRouter = require('./routes/member');
+const loanRouter = require('./routes/loan');
 
 const app = express();
 
@@ -30,6 +31,7 @@ app.use(express.urlencoded({ extended: true }));
 app.get('/', test);
 app.use('/api/auth', authRouter);
 app.use('/api/member', memberRouter);
+app.use('/api/loan', loanRouter);
 
 app.listen(process.env.APP_PORT, () =>
   console.log(`App listening at http://localhost:${process.env.APP_PORT}`)
