@@ -77,6 +77,10 @@ Loan.init(
       allowNull: true,
       type: DataTypes.FLOAT,
     },
+    totalRemainingAmount: {
+      allowNull: true,
+      type: DataTypes.FLOAT,
+    },
     incurredInterest: {
       allowNull: true,
       type: DataTypes.FLOAT,
@@ -91,6 +95,7 @@ Loan.init(
       type: DataTypes.ARRAY(DataTypes.JSONB),
       validate: {
         isRepaymentArray(value) {
+          console.log('value------', value);
           if (
             !Array.isArray(value) ||
             !value.every(obj => isRepaymentObject(obj))
@@ -128,13 +133,19 @@ const isRepaymentObject = obj => {
     typeof obj === 'object' &&
     !Array.isArray(obj) &&
     Object.keys(obj).every(key =>
-      ['id', 'paid_on', 'due_date', 'repayAmount', 'status'].includes(key)
+      [
+        'id',
+        'paid_on',
+        'due_date',
+        'emiAmount',
+        'remainingAmount',
+        'status',
+      ].includes(key)
     ) &&
     typeof obj.id === 'number' &&
-    (obj.paid_on instanceof Date || obj.paid_on == null) &&
-    obj.due_date instanceof Date &&
-    typeof obj.repayAmount === 'number' &&
-    obj.repayAmount > 0 &&
+    typeof obj.remainingAmount === 'number' &&
+    typeof obj.emiAmount === 'number' &&
+    obj.emiAmount > 0 &&
     Object.values(LOAN_STATUS).includes(obj.status)
   );
 };

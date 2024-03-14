@@ -43,6 +43,10 @@ module.exports = {
         allowNull: true,
         type: Sequelize.FLOAT,
       },
+      totalRemainingAmount: {
+        allowNull: true,
+        type: Sequelize.FLOAT,
+      },
       tenure: {
         required: true,
         allowNull: false,

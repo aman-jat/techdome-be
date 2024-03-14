@@ -57,11 +57,14 @@ const checkBorrower = async (req, res, next) => {
 const grabLoan = async (req, res, next) => {
   try {
     let where = { id: req.params.id };
-
-    if (['approve', 'reject'].includes(`${req.url}`.split('/').pop())) {
+    const endpoint = `${req.url}`.split('/').pop();
+    if (['approve', 'reject'].includes(endpoint)) {
       where['status'] = LOAN_STATUS.PENDING;
     } else {
       if (req.auth.user.role === ROLE.BORROWER) {
+        if (endpoint === 'repay') {
+          where['status'] = LOAN_STATUS.APPROVED;
+        }
         where['borrower_id'] = req.auth.user.id;
       } else {
         where[Op.or] = [{ lender_id: null }, { lender_id: req.auth.user.id }];

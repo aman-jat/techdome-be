@@ -16,4 +16,12 @@ router.put(
   loan.approve
 );
 
+router.put(
+  '/:id/repay',
+  mw.checkAuth,
+  mw.checkBorrower,
+  mw.grabLoan,
+  loan.repay
+);
+
 module.exports = router;

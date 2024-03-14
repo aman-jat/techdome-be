@@ -89,7 +89,8 @@ const approve = async (req, res) => {
       }
       repayments.push({
         id: i + 1,
-        repayAmount: emiAmount,
+        emiAmount: emiAmount,
+        remainingAmount: emiAmount,
         status: LOAN_STATUS.PENDING,
         due_date: new Date(
           new Date().setDate(new Date().getDate() + 7 * (i + 1))
@@ -99,6 +100,7 @@ const approve = async (req, res) => {
     }
     req.loan.incurredInterest = simpleInterest;
     req.loan.totalPayableAmount = totalPayableAmount;
+    req.loan.totalRemainingAmount = totalPayableAmount;
     req.loan.status = LOAN_STATUS.APPROVED;
     req.loan.lender_id = req.auth.user.id;
     req.loan.repayments = repayments;
@@ -115,4 +117,59 @@ const approve = async (req, res) => {
   }
 };
 
-module.exports = { create, getAll, getOne, approve };
+const repay = async (req, res) => {
+  try {
+    const { amount } = req.body;
+    const nextEmi = req.loan.repayments.find(emi => emi.status === 'PENDING');
+    if (
+      isNaN(amount) ||
+      amount < nextEmi.remainingAmount ||
+      amount > req.loan.totalRemainingAmount
+    ) {
+      return res.status(400).send({
+        message: `Invalid amount. Amount should be "greater than or equal to EMI's remaining amount " AND less than "total reamining amount")`,
+      });
+    }
+    let remainingAmount = amount;
+    let _repayments = [...req.loan.repayments];
+
+    for (let i = nextEmi.id - 1; remainingAmount !== 0; i++) {
+      const thisEMI = _repayments[i];
+      // if amoutn is less than EMI AMOUNT
+      if (remainingAmount < thisEMI.remainingAmount) {
+        thisEMI.remainingAmount -= remainingAmount;
+        remainingAmount = 0;
+        break;
+      }
+      if (remainingAmount === thisEMI.remainingAmount) {
+        thisEMI.status = LOAN_STATUS.PAID;
+        thisEMI.paid_on = new Date();
+        thisEMI.remainingAmount = 0;
+        if (_repayments.length - 1 === i) {
+          req.loan.status = 'PAID';
+        }
+        remainingAmount = 0;
+        break;
+      }
+      remainingAmount = remainingAmount - thisEMI.remainingAmount;
+      thisEMI.status = LOAN_STATUS.PAID;
+      thisEMI.paid_on = new Date();
+      thisEMI.remainingAmount = 0;
+      if (_repayments.length - 1 === i) {
+        req.loan.status = 'PAID';
+      }
+    }
+    req.loan.remainingAmount -= amount;
+    req.loan.changed('repayments', true);
+    await req.loan.save();
+    res.status(200).json(req.loan);
+  } catch (error) {
+    console.error(error);
+    res.status(400).send({
+      message: RES_MESSAGE.INTERNAL_ERROR,
+      error: error?.errors?.map(err => err.message).join(', '),
+    });
+  }
+};
+
+module.exports = { create, getAll, getOne, approve, repay };
