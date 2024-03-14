@@ -3,6 +3,7 @@ require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const cors = require('cors');
 
 const { test } = require('./controllers/test');
 const authRouter = require('./routes/auth');
@@ -10,6 +11,17 @@ const memberRouter = require('./routes/member');
 const loanRouter = require('./routes/loan');
 
 const app = express();
+app.use(
+  cors({
+    origin: [
+      /^http:\/\/localhost:[0-9]{1,5}$/,
+      'https://techdome-fe-phi.vercel.app',
+      'https://main--techdome-aman-jat.netlify.app/',
+    ],
+    credentials: true,
+    secure: false,
+  })
+);
 
 app.use(
   bodyParser.json({
@@ -33,6 +45,6 @@ app.use('/api/auth', authRouter);
 app.use('/api/member', memberRouter);
 app.use('/api/loan', loanRouter);
 
-app.listen(process.env.APP_PORT, () =>
-  console.log(`App listening at http://localhost:${process.env.APP_PORT}`)
+app.listen(process.env.PORT, () =>
+  console.log(`App listening at http://localhost:${process.env.PORT}`)
 );

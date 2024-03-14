@@ -159,8 +159,10 @@ const repay = async (req, res) => {
         req.loan.status = 'PAID';
       }
     }
-    req.loan.remainingAmount -= amount;
+    req.loan.totalRemainingAmount -= amount;
     req.loan.changed('repayments', true);
+    req.loan.changed('remainingAmount', true);
+
     await req.loan.save();
     res.status(200).json(req.loan);
   } catch (error) {

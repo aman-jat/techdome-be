@@ -11,11 +11,6 @@ const clearCookie = res => {
   res.clearCookie('_auth');
 };
 
-const setCookie = (res, user) => {
-  let options = { expires: new Date(Date.now() + 30 * 24 * 3600 * 1000) };
-  res.cookie('_auth', jwt.sign({ id: user.id }, user.salt), options);
-};
-
 const register = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
@@ -42,9 +37,8 @@ const register = async (req, res) => {
       name,
       role,
     });
-    clearCookie(res);
-    setCookie(res, user);
-    await res.status(201).json(member);
+    const accessToken = jwt.sign({ id: user.id }, user.salt);
+    await res.status(201).json({ token: accessToken, member });
   } catch (err) {
     console.error(err);
     res.status(400).send({
@@ -63,9 +57,8 @@ const login = async (req, res) => {
       throw new Error();
     }
     const member = await db.member.findOne({ where: { email } });
-    clearCookie(res);
-    setCookie(res, user);
-    res.status(200).json(member);
+    const accessToken = jwt.sign({ id: user.id }, user.salt);
+    await res.status(200).json({ token: accessToken, member });
   } catch (err) {
     console.error(err);
     res.status(401).send({

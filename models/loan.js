@@ -95,7 +95,6 @@ Loan.init(
       type: DataTypes.ARRAY(DataTypes.JSONB),
       validate: {
         isRepaymentArray(value) {
-          console.log('value------', value);
           if (
             !Array.isArray(value) ||
             !value.every(obj => isRepaymentObject(obj))
