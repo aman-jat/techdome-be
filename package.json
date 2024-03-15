@@ -5,7 +5,7 @@
   "author": "Aman Jat",
   "scripts": {
     "dev": "nodemon src/index.js",
-    "start": "nodemon src/index.js"
+    "start": "node src/index.js"
   },
   "devDependencies": {
     "sequelize-cli": "^6.6.2"
