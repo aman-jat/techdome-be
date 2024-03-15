@@ -10,7 +10,7 @@ module.exports = {
     dialectOptions: {
       ssl: {
         require: true,
-        rejectUnauthorized: false, // You might need this depending on your PostgreSQL configuration
+        rejectUnauthorized: false,
       },
     },
   },
