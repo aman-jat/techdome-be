@@ -33,6 +33,6 @@ app.use('/api/auth', authRouter);
 app.use('/api/member', memberRouter);
 app.use('/api/loan', loanRouter);
 
-app.listen(process.env.APP_PORT, () =>
-  console.log(`App listening at http://localhost:${process.env.APP_PORT}`)
+app.listen(process.env.PORT, () =>
+  console.log(`App listening at http://localhost:${process.env.PORT}`)
 );
