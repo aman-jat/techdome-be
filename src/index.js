@@ -11,7 +11,16 @@ const memberRouter = require('./routes/member');
 const loanRouter = require('./routes/loan');
 
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      /^http:\/\/localhost:[0-9]{1,5}$/,
+      'https://techdome-fe-phi.vercel.app/',
+      'https://main--techdome-aman-jat.netlify.app/',
+    ],
+    credentials: true,
+  })
+);
 
 app.use(
   bodyParser.json({
