@@ -13,11 +13,7 @@ const loanRouter = require('./routes/loan');
 const app = express();
 app.use(
   cors({
-    origin: [
-      /^http:\/\/localhost:[0-9]{1,5}$/,
-      'https://techdome-fe-phi.vercel.app/',
-      'https://main--techdome-aman-jat.netlify.app/',
-    ],
+    origin: '*',
     credentials: true,
   })
 );
