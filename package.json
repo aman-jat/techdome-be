@@ -4,7 +4,8 @@
   "description": "Techdome mini app backend",
   "author": "Aman Jat",
   "scripts": {
-    "dev": "nodemon src/index.js"
+    "dev": "nodemon src/index.js",
+    "start": "nodemon src/index.js"
   },
   "devDependencies": {
     "sequelize-cli": "^6.6.2"
