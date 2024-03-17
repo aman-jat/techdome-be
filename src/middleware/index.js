@@ -10,7 +10,7 @@ const checkAuth = async (req, res, next) => {
     const user = await db.user.findOne({
       where: { id: token.decode(_auth).id },
     });
-    if (user) {
+    if (token.check(_auth, user.salt)) {
       const member = await db.member.findOne({
         where: { email: user.email },
       });
