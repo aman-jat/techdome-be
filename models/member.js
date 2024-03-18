@@ -19,6 +19,15 @@ Member.init(
     name: {
       allowNull: false,
       type: DataTypes.STRING,
+      validate: {
+        notNull: true,
+        notEmpty: true,
+        isString(value) {
+          if (typeof value !== 'string') {
+            throw new Error('Name must be a string');
+          }
+        },
+      },
     },
     email: {
       allowNull: false,

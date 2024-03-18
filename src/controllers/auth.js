@@ -5,6 +5,7 @@ const {
   SALT_ROUNDS,
   RES_MESSAGE,
   PASSWORD_REGEX,
+  ROLE,
 } = require('../lib/constants');
 
 const clearCookie = res => {
@@ -14,14 +15,25 @@ const clearCookie = res => {
 const register = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
+    if (!password || !PASSWORD_REGEX.test(password)) {
+      throw new Error(
+        'Password must be at least 4 characters long and contain only letters and digits.'
+      );
+    }
+
+    // Check if name is not empty string or non-string value
+    if (!name || typeof name !== 'string') {
+      throw new Error('Name must be provided as a non-empty string.');
+    }
+
+    // Check if role is one of the specified values
     if (
-      !name ||
-      !email ||
-      !password ||
-      !role ||
-      !PASSWORD_REGEX.test(password)
+      role.toUpperCase() !== ROLE.LENDER &&
+      role.toUpperCase() !== ROLE.BORROWER
     ) {
-      throw new Error();
+      throw new Error(
+        `Role must be either "${ROLE.LENDER}" or "${ROLE.BORROWER}".`
+      );
     }
 
     const salt = await bcrypt.genSalt(SALT_ROUNDS);
@@ -35,7 +47,7 @@ const register = async (req, res) => {
       email,
       user_id: user.dataValues.id,
       name,
-      role,
+      role: role.toUpperCase(),
     });
     const accessToken = jwt.sign({ id: user.id }, user.salt);
     await res.status(201).json({ token: accessToken, member });
@@ -43,7 +55,9 @@ const register = async (req, res) => {
     console.error(err);
     res.status(400).send({
       message:
-        err?.errors?.map(er => er.message).join(', ') || 'Invalid payload',
+        err?.errors?.map(er => er.message).join(', ') ||
+        err?.message ||
+        RES_MESSAGE.INTERNAL_ERROR,
     });
   }
 };
@@ -52,9 +66,13 @@ const login = async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await db.user.findOne({ where: { email } });
+
+    if (!user) {
+      throw new Error(RES_MESSAGE.INVALID_PASS_EMAIL);
+    }
     const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword || !user) {
-      throw new Error();
+      throw new Error(RES_MESSAGE.INVALID_PASS_EMAIL);
     }
     const member = await db.member.findOne({ where: { email } });
     const accessToken = jwt.sign({ id: user.id }, user.salt);
@@ -62,7 +80,7 @@ const login = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(401).send({
-      message: RES_MESSAGE.INVALID_PASS_EMAIL,
+      message: err?.message || RES_MESSAGE.INTERNAL_ERROR,
     });
   }
 };

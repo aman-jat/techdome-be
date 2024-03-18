@@ -4,6 +4,18 @@ const token = require('../lib/token');
 const db = require('../lib/db');
 const { RES_MESSAGE, ROLE, LOAN_STATUS } = require('../lib/constants');
 
+const checkPayload = requiredFields => {
+  return (req, res, next) => {
+    const missingFields = requiredFields.filter(field => !(field in req.body));
+    if (missingFields.length > 0) {
+      return res.status(400).json({
+        error: `Missing required fields: ${missingFields.join(', ')}`,
+      });
+    }
+    next();
+  };
+};
+
 const checkAuth = async (req, res, next) => {
   try {
     const _auth = req.headers.authorization;
@@ -87,4 +99,10 @@ const grabLoan = async (req, res, next) => {
   }
 };
 
-module.exports = { checkAuth, checkLender, checkBorrower, grabLoan };
+module.exports = {
+  checkAuth,
+  checkLender,
+  checkBorrower,
+  grabLoan,
+  checkPayload,
+};

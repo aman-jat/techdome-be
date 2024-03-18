@@ -2,12 +2,13 @@ const SALT_ROUNDS = 10;
 const INTEREST_RATE = 0;
 
 const RES_MESSAGE = {
-  LOGOUT: 'Logout Successfully',
-  INVALID_PASS_EMAIL: 'Invalid email or password',
-  UNAUTHORIZED: 'Unauthorized action',
-  UNAUTHENTICATED: 'Please login again',
-  INTERNAL_ERROR: 'Something went wrong',
-  NOT_FOUND: 'Not found',
+  LOGOUT: 'Logout successful',
+  INVALID_PASS_EMAIL:
+    'Invalid email or password. Please check your credentials and try again.',
+  UNAUTHORIZED: 'You are not authorized to perform this action.',
+  UNAUTHENTICATED: 'Authentication failed. Please login again to continue.',
+  INTERNAL_ERROR: 'An unexpected error occurred. Please try again later.',
+  NOT_FOUND: 'The requested resource was not found.',
 };
 
 const ROLE = {
